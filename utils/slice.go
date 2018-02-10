@@ -57,6 +57,24 @@ func (cs *ConcurrentSlice) Append(item interface{}) {
 	cs.items = append(cs.items, item)
 }
 
+// Append a slice to the concurrent slice
+func (cs *ConcurrentSlice) AppendSlice(items []interface{}) {
+	cs.Lock()
+	defer cs.Unlock()
+
+	cs.items = append(cs.items, items...)
+}
+
+// Append a slice to the concurrent slice
+func (cs *ConcurrentSlice) AppendCSlice(cso *ConcurrentSlice) {
+	cs.Lock()
+	defer cs.Unlock()
+	cso.Lock()
+	defer cso.Unlock()	
+
+	cs.items = append(cs.items, cso.items...)
+}
+
 // Iter iterates over the items in the concurrent slice
 // Each item is sent over a channel, so that
 // we can iterate over the slice using the builin range keyword
